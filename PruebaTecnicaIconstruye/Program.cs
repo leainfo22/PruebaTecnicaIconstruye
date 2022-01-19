@@ -71,104 +71,81 @@ namespace MyApp // Note: actual namespace depends on the project name.
                                                 worksheet.Cells[1, j].Style.Font.Color.SetColor(Color.White);
                                             }
                                             string firstDay = new DateTime(year.Year, month.AddMonths(i).Month, 1).ToString("dddd");
-                                            if (firstDay == "lunes")
+                                            
+                                            int intDay = 0;
+                                            int intDay2 = 0;
+                                            switch (firstDay)
                                             {
-                                                int intDay;
-                                                for (int j = 1; j <= 7; j++)
+                                                case "lunes":
+                                                    intDay = 0;
+                                                    intDay2 = 7;
+                                                    break;
+                                                case "martes":
+                                                    intDay = -1;
+                                                    intDay2 = 6;
+                                                    break;
+                                                case "miércoles":
+                                                    intDay = -2;
+                                                    intDay2 = 5;
+                                                    break;
+                                                case "jueves":
+                                                    intDay = -3;
+                                                    intDay2 = 4;
+                                                    break;
+                                                case "viernes":
+                                                    intDay = -4;
+                                                    intDay2 = 3;
+                                                    break;
+                                                case "sábado":
+                                                    intDay = -5;
+                                                    intDay2 = 2;
+                                                    break;
+                                                case "domingo":
+                                                    intDay = -6;
+                                                    intDay2 = 1;
+                                                    break;
+                                            }
+                                            for (int j = 1; j <= 7; j++)
+                                            {
+                                                if (intDay < 0)
                                                 {
-                                                    intDay = 7;
-                                                    worksheet.Cells[2, j].Value = year.AddDays(-intDay).ToString("dd");
+                                                    worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
                                                     worksheet.Cells[2, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                     worksheet.Cells[2, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                                     worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
-                                                    intDay--;
                                                 }
-
-                                                for (int z = 3; z < 8; z++)
+                                                else
                                                 {
-                                                    for (int j = 1; j <= 7; j++)
-                                                    {
-                                                        intDay = 7;
-                                                        worksheet.Cells[z, j].Value = year.AddDays(-intDay).ToString("dd");
-                                                        worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
-                                                        intDay--;
-                                                    }
+                                                    worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
+                                                    worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
                                                 }
+                                                intDay++;
                                             }
-                                            else
+                                            string lastDayOfMonth = month.AddMonths(i + 1).AddDays(-month.AddMonths(i).Day).ToString("dd");
+                                            bool flag = false;
+                                            for (int z = 3; z < 8; z++)
                                             {
-                                                int intDay = 0;
-                                                int intDay2 = 0;
-                                                switch (firstDay)
-                                                {
-                                                    case "martes":
-                                                        intDay = -1;
-                                                        intDay2 = 6;
-                                                        break;
-                                                    case "miércoles":
-                                                        intDay = -2;
-                                                        intDay2 = 5;
-                                                        break;
-                                                    case "jueves":
-                                                        intDay = -3;
-                                                        intDay2 = 4;
-                                                        break;
-                                                    case "viernes":
-                                                        intDay = -4;
-                                                        intDay2 = 3;
-                                                        break;
-                                                    case "sábado":
-                                                        intDay = -5;
-                                                        intDay2 = 2;
-                                                        break;
-                                                    case "domingo":
-                                                        intDay = -6;
-                                                        intDay2 = 1;
-                                                        break;
-                                                }
                                                 for (int j = 1; j <= 7; j++)
                                                 {
-                                                    if (intDay < 0)
+
+                                                    if (!flag)
                                                     {
-                                                        worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
-                                                        worksheet.Cells[2, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                                        worksheet.Cells[2, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-                                                        worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
+                                                        worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
+                                                        worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
                                                     }
                                                     else
                                                     {
-                                                        worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
-                                                        worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
+                                                        worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
+                                                        worksheet.Cells[z, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                        worksheet.Cells[z, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                                        worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
                                                     }
-                                                    intDay++;
+                                                    if (lastDayOfMonth == year.AddDays(intDay2).ToString("dd"))
+                                                        flag = true;
+
+                                                    intDay2++;
                                                 }
-                                                string lastDayOfMonth = month.AddMonths(i + 1).AddDays(-month.AddMonths(i).Day).ToString("dd");
-                                                bool flag = false;
-                                                for (int z = 3; z < 8; z++)
-                                                {
-                                                    for (int j = 1; j <= 7; j++)
-                                                    {
-
-                                                        if (!flag)
-                                                        {
-                                                            worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
-                                                            worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
-                                                        }
-                                                        else
-                                                        {
-                                                            worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
-                                                            worksheet.Cells[z, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                                            worksheet.Cells[z, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-                                                            worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
-                                                        }
-                                                        if (lastDayOfMonth == year.AddDays(intDay2).ToString("dd"))
-                                                            flag = true;
-
-                                                        intDay2++;
-                                                    }
-                                                }
-                                            }
-
+                                            }  
                                         }
                                         FileInfo fi = new FileInfo(path + "\\excelTest.xlsx");
                                         excelPackage.SaveAs(fi);
