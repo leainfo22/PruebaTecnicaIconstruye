@@ -1,8 +1,7 @@
 ﻿using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
+using OfficeOpenXml.Style;
+using System.Drawing;
 using System.Globalization;
-using System.Linq;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -16,85 +15,182 @@ namespace MyApp // Note: actual namespace depends on the project name.
                 bool run = true;
                 while (run) 
                 {
-                    DateTime date;
-                    if (DateTime.TryParseExact(args[0], "yyyy", enUS, DateTimeStyles.None, out date))
+                    try 
                     {
-                        Console.WriteLine("Ingrese la ruta de guardado del archivo: \n");
-                        var path = Directory.GetCurrentDirectory(); //Console.ReadLine();
-                        if (path != null)
+                        DateTime year;
+                        if (DateTime.TryParseExact(args[0], "yyyy", enUS, DateTimeStyles.None, out year))
                         {
-                            if (!string.IsNullOrEmpty(path.Trim())) 
+                            Console.WriteLine("Ingrese la ruta de guardado del archivo: Ejemplo: C:\\Directorio\\excel \n");
+                            var path = Console.ReadLine();
+                            if (path != null)
                             {
-                                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                                using (ExcelPackage excelPackage = new ExcelPackage())
+                                if (!string.IsNullOrEmpty(path.Trim()))
                                 {
-                                    //Set some properties of the Excel document
-                                    excelPackage.Workbook.Properties.Author = "Leandro Vasquez";
-                                    excelPackage.Workbook.Properties.Title = "Prueba tecnica Iconstruye";
-                                    excelPackage.Workbook.Properties.Created = DateTime.Now;
-                                    string numberMonth = DateTime.Now.ToString("MM");
-                                    DateTime month = DateTime.Now;
-                                    DateTime day = DateTime.Now;
-
-
-                                    if (DateTime.Now.ToString("MM") != "01")
+                                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                                    using (ExcelPackage excelPackage = new ExcelPackage())
                                     {
-                                        for (int i = 1; i < 12; i++)
+                                        excelPackage.Workbook.Properties.Author = "Leandro Vasquez";
+                                        excelPackage.Workbook.Properties.Title = "Prueba tecnica Iconstruye";
+                                        excelPackage.Workbook.Properties.Created = DateTime.Now;
+                                        string numberMonth = DateTime.Now.ToString("MM");
+                                        DateTime month = DateTime.Now;
+                                        DateTime day = DateTime.Now;
+
+
+                                        if (DateTime.Now.ToString("MM") != "01")
                                         {
-                                            if (DateTime.Now.AddMonths(i).ToString("MM") == "01")
+                                            for (int i = 1; i < 12; i++)
                                             {
-                                                month = DateTime.Now.AddMonths(i);
-                                                break;
+                                                if (DateTime.Now.AddMonths(i).ToString("MM") == "01")
+                                                {
+                                                    month = DateTime.Now.AddMonths(i);
+                                                    break;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    if (DateTime.Now.ToString("dddd") != "lunes")
-                                    {
-                                        for (int i = 1; i < 7; i++)
+                                        if (DateTime.Now.ToString("dddd") != "lunes")
                                         {
-                                            if (DateTime.Now.AddMonths(i).ToString("dddd") == "lunes")
+                                            for (int i = 1; i < 7; i++)
                                             {
-                                                day = DateTime.Now.AddMonths(i);
-                                                break;
+                                                if (DateTime.Now.AddDays(i).ToString("dddd") == "lunes")
+                                                {
+                                                    day = DateTime.Now.AddDays(i);
+                                                    break;
+                                                }
                                             }
                                         }
-                                    }
-
-                                    for (int i = 0; i < 12; i++)
-                                    {
-                                        var a = DateTime.Now.AddMonths(i).ToString("MMMM");
-                                        ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(month.AddMonths(i).ToString("MMMM"));
-                                        //excelPackage.Workbook.Worksheets.Add(DateTime.Now.AddMonths(i).ToString("MMMM"));
-                                        for (int j = 1; j < 7; j++)
+                                        for (int i = 0; i < 12; i++)
                                         {
-                                            worksheet.Cells["A"+j].Value = day.ToString("dddd");
-                                            worksheet.Cells["A"+j].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Blue);
+                                            ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(month.AddMonths(i).ToString("MMMM"));
+                                            for (int j = 1; j <= 7; j++)
+                                            {
+                                                worksheet.Cells[1, j].Value = day.AddDays(j - 1).ToString("dddd");
+                                                worksheet.Cells[1, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[1, j].Style.Fill.BackgroundColor.SetColor(Color.Blue);
+                                                worksheet.Cells[1, j].Style.Font.Color.SetColor(Color.White);
+                                            }
+                                            string firstDay = new DateTime(year.Year, month.AddMonths(i).Month, 1).ToString("dddd");
+                                            if (firstDay == "lunes")
+                                            {
+                                                int intDay;
+                                                for (int j = 1; j <= 7; j++)
+                                                {
+                                                    intDay = 7;
+                                                    worksheet.Cells[2, j].Value = year.AddDays(-intDay).ToString("dd");
+                                                    worksheet.Cells[2, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                    worksheet.Cells[2, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                                    worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
+                                                    intDay--;
+                                                }
+
+                                                for (int z = 3; z < 8; z++)
+                                                {
+                                                    for (int j = 1; j <= 7; j++)
+                                                    {
+                                                        intDay = 7;
+                                                        worksheet.Cells[z, j].Value = year.AddDays(-intDay).ToString("dd");
+                                                        worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
+                                                        intDay--;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                int intDay = 0;
+                                                int intDay2 = 0;
+                                                switch (firstDay)
+                                                {
+                                                    case "martes":
+                                                        intDay = -1;
+                                                        intDay2 = 6;
+                                                        break;
+                                                    case "miércoles":
+                                                        intDay = -2;
+                                                        intDay2 = 5;
+                                                        break;
+                                                    case "jueves":
+                                                        intDay = -3;
+                                                        intDay2 = 4;
+                                                        break;
+                                                    case "viernes":
+                                                        intDay = -4;
+                                                        intDay2 = 3;
+                                                        break;
+                                                    case "sábado":
+                                                        intDay = -5;
+                                                        intDay2 = 2;
+                                                        break;
+                                                    case "domingo":
+                                                        intDay = -6;
+                                                        intDay2 = 1;
+                                                        break;
+                                                }
+                                                for (int j = 1; j <= 7; j++)
+                                                {
+                                                    if (intDay < 0)
+                                                    {
+                                                        worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
+                                                        worksheet.Cells[2, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                        worksheet.Cells[2, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                                        worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
+                                                    }
+                                                    else
+                                                    {
+                                                        worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
+                                                        worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
+                                                    }
+                                                    intDay++;
+                                                }
+                                                string lastDayOfMonth = month.AddMonths(i + 1).AddDays(-month.AddMonths(i).Day).ToString("dd");
+                                                bool flag = false;
+                                                for (int z = 3; z < 8; z++)
+                                                {
+                                                    for (int j = 1; j <= 7; j++)
+                                                    {
+
+                                                        if (!flag)
+                                                        {
+                                                            worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
+                                                            worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
+                                                        }
+                                                        else
+                                                        {
+                                                            worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
+                                                            worksheet.Cells[z, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                            worksheet.Cells[z, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                                            worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
+                                                        }
+                                                        if (lastDayOfMonth == year.AddDays(intDay2).ToString("dd"))
+                                                            flag = true;
+
+                                                        intDay2++;
+                                                    }
+                                                }
+                                            }
+
                                         }
-
+                                        FileInfo fi = new FileInfo(path + "\\excelTest.xlsx");
+                                        excelPackage.SaveAs(fi);
+                                        run = false;
                                     }
-                                    //Create the WorkSheet
-
-                                    //Add some text to cell A1
-                                    //worksheet.Cells["A1"].Value = "My first EPPlus spreadsheet!";
-                                    //You could also use [line, column] notation:
-                                    //worksheet.Cells[1, 2].Value = "This is cell B1!";
-
-                                    //Save your file
-                                    FileInfo fi = new FileInfo(path + "\\excelTest.xlsx");
-                                    excelPackage.SaveAs(fi);
-                                    run = false;
                                 }
+                                else
+                                    Console.WriteLine("Ingrese una ruta de guardado del archivo: \n");
                             }
                             else
                                 Console.WriteLine("Ingrese una ruta de guardado del archivo: \n");
+
                         }
                         else
-                            Console.WriteLine("Ingrese una ruta de guardado del archivo: \n");
-
+                            Console.WriteLine("Ingrese un año con el formato 'yyyy'. Ejemplo: 2022 ");
                     }
-                    else
-                        Console.WriteLine("Ingrese un año con el formato 'yyyy'. Ejemplo: 2022 ");
+                    catch (Exception ex)
+                    { 
+                        run = false; 
+                        Console.WriteLine(ex.Message);
+                    }
+                    
                 }
                 
             }
