@@ -21,7 +21,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
                         if (DateTime.TryParseExact(args[0], "yyyy", enUS, DateTimeStyles.None, out year))
                         {
                             Console.WriteLine("Ingrese la ruta de guardado del archivo: Ejemplo: C:\\Directorio\\excel \n");
-                            var path = Console.ReadLine();
+                            var path = Directory.GetCurrentDirectory();//Console.ReadLine();
                             if (path != null)
                             {
                                 if (!string.IsNullOrEmpty(path.Trim()))
@@ -109,14 +109,14 @@ namespace MyApp // Note: actual namespace depends on the project name.
                                             {
                                                 if (intDay < 0)
                                                 {
-                                                    worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
+                                                    worksheet.Cells[2, j].Value = year.AddMonths(i).AddDays(intDay).ToString("dd");
                                                     worksheet.Cells[2, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                     worksheet.Cells[2, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                                     worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
                                                 }
                                                 else
                                                 {
-                                                    worksheet.Cells[2, j].Value = year.AddDays(intDay).ToString("dd");
+                                                    worksheet.Cells[2, j].Value = year.AddMonths(i).AddDays(intDay).ToString("dd");
                                                     worksheet.Cells[2, j].Style.Font.Color.SetColor(Color.Black);
                                                 }
                                                 intDay++;
@@ -130,17 +130,17 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
                                                     if (!flag)
                                                     {
-                                                        worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
+                                                        worksheet.Cells[z, j].Value = year.AddMonths(i).AddDays(intDay2).ToString("dd");
                                                         worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
                                                     }
                                                     else
                                                     {
-                                                        worksheet.Cells[z, j].Value = year.AddDays(intDay2).ToString("dd");
+                                                        worksheet.Cells[z, j].Value = year.AddMonths(i).AddDays(intDay2).ToString("dd");
                                                         worksheet.Cells[z, j].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                         worksheet.Cells[z, j].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                                         worksheet.Cells[z, j].Style.Font.Color.SetColor(Color.Black);
                                                     }
-                                                    if (lastDayOfMonth == year.AddDays(intDay2).ToString("dd"))
+                                                    if (lastDayOfMonth == year.AddMonths(i).AddDays(intDay2).ToString("dd"))
                                                         flag = true;
 
                                                     intDay2++;
