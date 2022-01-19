@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PruebaTecnicaIconstruye": {
+      "commandName": "Project",
+      "commandLineArgs": "2022"
+    }
+  }
+}
